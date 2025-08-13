@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Lightbulb, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
 
 interface HypothesisResponse {
   id: string;
@@ -21,12 +21,23 @@ interface HypothesisResponse {
   createdAt: string;
 }
 
+interface HypothesisFormData {
+  domain: string;
+  question: string;
+  variables: string;
+  constraints: string;
+  searchQuery: string;
+}
+
 export function HypothesisGenerator() {
-  const [domain, setDomain] = useState("");
-  const [question, setQuestion] = useState("");
-  const [variables, setVariables] = useState("");
-  const [constraints, setConstraints] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const { data: formData, updateData } = useFormPersistence<HypothesisFormData>("hypothesis", {
+    domain: "",
+    question: "",
+    variables: "",
+    constraints: "",
+    searchQuery: ""
+  });
+  
   const [generatedHypothesis, setGeneratedHypothesis] = useState<HypothesisResponse | null>(null);
 
   const { toast } = useToast();
@@ -74,7 +85,7 @@ export function HypothesisGenerator() {
   });
 
   const handleGenerate = () => {
-    if (!domain.trim() || !question.trim() || !variables.trim()) {
+    if (!formData.domain.trim() || !formData.question.trim() || !formData.variables.trim()) {
       toast({
         title: "Missing Information",
         description: "Please fill in domain, research question, and variables.",
@@ -84,20 +95,22 @@ export function HypothesisGenerator() {
     }
 
     generateMutation.mutate({
-      domain: domain.trim(),
-      question: question.trim(),
-      variables: variables.trim(),
-      constraints: constraints.trim() || undefined,
-      searchQuery: searchQuery.trim() || undefined,
+      domain: formData.domain.trim(),
+      question: formData.question.trim(),
+      variables: formData.variables.trim(),
+      constraints: formData.constraints.trim() || undefined,
+      searchQuery: formData.searchQuery.trim() || undefined,
     });
   };
 
   const handleClear = () => {
-    setDomain("");
-    setQuestion("");
-    setVariables("");
-    setConstraints("");
-    setSearchQuery("");
+    updateData({
+      domain: "",
+      question: "",
+      variables: "",
+      constraints: "",
+      searchQuery: ""
+    });
     setGeneratedHypothesis(null);
   };
 
@@ -125,7 +138,7 @@ export function HypothesisGenerator() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="domain">Research Domain *</Label>
-                <Select value={domain} onValueChange={setDomain}>
+                <Select value={formData.domain} onValueChange={(value) => updateData({ domain: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select research domain" />
                   </SelectTrigger>
@@ -148,8 +161,8 @@ export function HypothesisGenerator() {
                 <Label htmlFor="searchQuery">Literature Search Query (Optional)</Label>
                 <Input
                   id="searchQuery"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={formData.searchQuery}
+                  onChange={(e) => updateData({ searchQuery: e.target.value })}
                   placeholder="e.g., protein folding machine learning"
                 />
               </div>
@@ -159,8 +172,8 @@ export function HypothesisGenerator() {
               <Label htmlFor="question">Research Question *</Label>
               <Textarea
                 id="question"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                value={formData.question}
+                onChange={(e) => updateData({ question: e.target.value })}
                 placeholder="What specific question are you trying to answer? Be as clear and specific as possible."
                 className="min-h-[80px]"
               />
@@ -170,8 +183,8 @@ export function HypothesisGenerator() {
               <Label htmlFor="variables">Variables to Study *</Label>
               <Textarea
                 id="variables"
-                value={variables}
-                onChange={(e) => setVariables(e.target.value)}
+                value={formData.variables}
+                onChange={(e) => updateData({ variables: e.target.value })}
                 placeholder="List the independent and dependent variables you want to investigate."
                 className="min-h-[80px]"
               />
@@ -181,8 +194,8 @@ export function HypothesisGenerator() {
               <Label htmlFor="constraints">Constraints & Limitations (Optional)</Label>
               <Textarea
                 id="constraints"
-                value={constraints}
-                onChange={(e) => setConstraints(e.target.value)}
+                value={formData.constraints}
+                onChange={(e) => updateData({ constraints: e.target.value })}
                 placeholder="Any practical constraints, ethical considerations, or methodological limitations to consider."
                 className="min-h-[60px]"
               />

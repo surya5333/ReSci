@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
 import { apiRequest } from "@/lib/queryClient";
 
 interface ResearchMethod {
@@ -28,10 +29,18 @@ interface MethodsRecommendation {
   confidence: number;
 }
 
+interface MethodsFormData {
+  hypothesis: string;
+  variables: string;
+  constraints: string;
+}
+
 export function MethodsRecommender() {
-  const [hypothesis, setHypothesis] = useState("");
-  const [variables, setVariables] = useState("");
-  const [constraints, setConstraints] = useState("");
+  const { data: formData, updateData } = useFormPersistence<MethodsFormData>("methods", {
+    hypothesis: "",
+    variables: "",
+    constraints: ""
+  });
   const [results, setResults] = useState<MethodsRecommendation | null>(null);
   
   const { toast } = useToast();
@@ -61,7 +70,7 @@ export function MethodsRecommender() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hypothesis.trim() || !variables.trim()) {
+    if (!formData.hypothesis.trim() || !formData.variables.trim()) {
       toast({
         title: "Missing Information",
         description: "Please provide both hypothesis and variables.",
@@ -69,7 +78,11 @@ export function MethodsRecommender() {
       });
       return;
     }
-    generateMethods.mutate({ hypothesis, variables, constraints });
+    generateMethods.mutate({ 
+      hypothesis: formData.hypothesis, 
+      variables: formData.variables, 
+      constraints: formData.constraints 
+    });
   };
 
   const getFeasibilityColor = (feasibility: string) => {
@@ -175,8 +188,8 @@ export function MethodsRecommender() {
                 id="hypothesis"
                 placeholder="Enter your research hypothesis..."
                 rows={4}
-                value={hypothesis}
-                onChange={(e) => setHypothesis(e.target.value)}
+                value={formData.hypothesis}
+                onChange={(e) => updateData({ hypothesis: e.target.value })}
                 className="resize-none"
               />
             </div>
@@ -186,8 +199,8 @@ export function MethodsRecommender() {
               <Input
                 id="variables"
                 placeholder="Independent and dependent variables..."
-                value={variables}
-                onChange={(e) => setVariables(e.target.value)}
+                value={formData.variables}
+                onChange={(e) => updateData({ variables: e.target.value })}
               />
             </div>
 
@@ -196,8 +209,8 @@ export function MethodsRecommender() {
               <Input
                 id="constraints"
                 placeholder="Budget, time, ethical considerations..."
-                value={constraints}
-                onChange={(e) => setConstraints(e.target.value)}
+                value={formData.constraints}
+                onChange={(e) => updateData({ constraints: e.target.value })}
               />
             </div>
 
@@ -227,7 +240,7 @@ export function MethodsRecommender() {
               <p className="text-slate-600 dark:text-slate-400">
                 <strong>Query:</strong> 
                 <span className="font-mono bg-white dark:bg-slate-800 px-2 py-1 rounded ml-2">
-                  {hypothesis ? `${hypothesis.slice(0, 30)}...` : "Enter hypothesis to see query"}
+                  {formData.hypothesis ? `${formData.hypothesis.slice(0, 30)}...` : "Enter hypothesis to see query"}
                 </span>
               </p>
               <p className="text-slate-600 dark:text-slate-400"><strong>Target:</strong> Experimental methods, measurement techniques</p>

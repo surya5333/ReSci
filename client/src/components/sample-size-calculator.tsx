@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
 import { apiRequest } from "@/lib/queryClient";
 
 interface SampleSizeResult {
@@ -17,11 +18,20 @@ interface SampleSizeResult {
   assumptions: string[];
 }
 
+interface SampleSizeFormData {
+  testType: string;
+  effectSize: string;
+  power: string;
+  alpha: string;
+}
+
 export function SampleSizeCalculator() {
-  const [testType, setTestType] = useState("");
-  const [effectSize, setEffectSize] = useState("");
-  const [power, setPower] = useState("0.80");
-  const [alpha, setAlpha] = useState("0.05");
+  const { data: formData, updateData } = useFormPersistence<SampleSizeFormData>("sample-size", {
+    testType: "",
+    effectSize: "",
+    power: "0.80",
+    alpha: "0.05"
+  });
   const [results, setResults] = useState<SampleSizeResult | null>(null);
   
   const { toast } = useToast();
@@ -51,7 +61,7 @@ export function SampleSizeCalculator() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!testType || !effectSize || !power || !alpha) {
+    if (!formData.testType || !formData.effectSize || !formData.power || !formData.alpha) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -61,10 +71,10 @@ export function SampleSizeCalculator() {
     }
 
     calculateSampleSize.mutate({
-      testType,
-      effectSize: parseFloat(effectSize),
-      power: parseFloat(power),
-      alpha: parseFloat(alpha)
+      testType: formData.testType,
+      effectSize: parseFloat(formData.effectSize),
+      power: parseFloat(formData.power),
+      alpha: parseFloat(formData.alpha)
     });
   };
 
@@ -94,7 +104,7 @@ export function SampleSizeCalculator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="test-type">Test Type</Label>
-                <Select value={testType} onValueChange={setTestType}>
+                <Select value={formData.testType} onValueChange={(value) => updateData({ testType: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select test type" />
                   </SelectTrigger>
@@ -115,14 +125,14 @@ export function SampleSizeCalculator() {
                   type="number"
                   step="0.1"
                   placeholder="0.5"
-                  value={effectSize}
-                  onChange={(e) => setEffectSize(e.target.value)}
+                  value={formData.effectSize}
+                  onChange={(e) => updateData({ effectSize: e.target.value })}
                 />
               </div>
 
               <div>
                 <Label htmlFor="power">Power (1-β)</Label>
-                <Select value={power} onValueChange={setPower}>
+                <Select value={formData.power} onValueChange={(value) => updateData({ power: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -136,7 +146,7 @@ export function SampleSizeCalculator() {
 
               <div>
                 <Label htmlFor="alpha">Alpha (α)</Label>
-                <Select value={alpha} onValueChange={setAlpha}>
+                <Select value={formData.alpha} onValueChange={(value) => updateData({ alpha: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

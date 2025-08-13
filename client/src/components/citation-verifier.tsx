@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
 import { apiRequest } from "@/lib/queryClient";
 
 interface Evidence {
@@ -28,8 +29,14 @@ interface VerificationResult {
   aiAnalysis: string;
 }
 
+interface CitationFormData {
+  claim: string;
+}
+
 export function CitationVerifier() {
-  const [claim, setClaim] = useState("");
+  const { data: formData, updateData } = useFormPersistence<CitationFormData>("citation", {
+    claim: ""
+  });
   const [results, setResults] = useState<VerificationResult | null>(null);
   
   const { toast } = useToast();
@@ -59,7 +66,7 @@ export function CitationVerifier() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!claim.trim()) {
+    if (!formData.claim.trim()) {
       toast({
         title: "Missing Information",
         description: "Please enter a research claim to verify.",
@@ -67,7 +74,7 @@ export function CitationVerifier() {
       });
       return;
     }
-    verifyCitation.mutate({ claim });
+    verifyCitation.mutate({ claim: formData.claim });
   };
 
   const getStatusColor = (status: string) => {
@@ -117,8 +124,8 @@ export function CitationVerifier() {
               id="claim"
               placeholder="Enter the research claim you want to verify..."
               rows={3}
-              value={claim}
-              onChange={(e) => setClaim(e.target.value)}
+              value={formData.claim}
+              onChange={(e) => updateData({ claim: e.target.value })}
               className="resize-none"
             />
             

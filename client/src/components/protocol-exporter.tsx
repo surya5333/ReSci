@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useFormPersistence } from "@/hooks/use-form-persistence";
 import { apiRequest } from "@/lib/queryClient";
 
 interface Method {
@@ -17,13 +18,24 @@ interface Method {
   createdAt: string;
 }
 
+interface ProtocolFormData {
+  selectedMethods: string[];
+  selectedFormat: string;
+  title: string;
+  includeCitations: boolean;
+  includeEquipment: boolean;
+  includeCostEstimates: boolean;
+}
+
 export function ProtocolExporter() {
-  const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
-  const [selectedFormat, setSelectedFormat] = useState("pdf");
-  const [title, setTitle] = useState("");
-  const [includeCitations, setIncludeCitations] = useState(true);
-  const [includeEquipment, setIncludeEquipment] = useState(true);
-  const [includeCostEstimates, setIncludeCostEstimates] = useState(false);
+  const { data: formData, updateData } = useFormPersistence<ProtocolFormData>("protocol", {
+    selectedMethods: [],
+    selectedFormat: "pdf",
+    title: "",
+    includeCitations: true,
+    includeEquipment: true,
+    includeCostEstimates: false
+  });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -68,18 +80,18 @@ export function ProtocolExporter() {
 
   const handleMethodSelection = (methodId: string, checked: boolean) => {
     if (checked) {
-      setSelectedMethods([...selectedMethods, methodId]);
+      updateData({ selectedMethods: [...formData.selectedMethods, methodId] });
     } else {
-      setSelectedMethods(selectedMethods.filter(id => id !== methodId));
+      updateData({ selectedMethods: formData.selectedMethods.filter(id => id !== methodId) });
     }
   };
 
   const handleFormatSelection = (format: string) => {
-    setSelectedFormat(format);
+    updateData({ selectedFormat: format });
   };
 
   const handleExport = () => {
-    if (selectedMethods.length === 0) {
+    if (formData.selectedMethods.length === 0) {
       toast({
         title: "No Methods Selected",
         description: "Please select at least one method to export.",
@@ -88,7 +100,7 @@ export function ProtocolExporter() {
       return;
     }
 
-    if (!title.trim()) {
+    if (!formData.title.trim()) {
       toast({
         title: "Missing Title",
         description: "Please provide a title for the protocol.",
@@ -98,12 +110,12 @@ export function ProtocolExporter() {
     }
 
     exportProtocol.mutate({
-      methodIds: selectedMethods,
-      title,
-      format: selectedFormat,
-      includeCitations,
-      includeEquipment,
-      includeCostEstimates
+      methodIds: formData.selectedMethods,
+      title: formData.title,
+      format: formData.selectedFormat,
+      includeCitations: formData.includeCitations,
+      includeEquipment: formData.includeEquipment,
+      includeCostEstimates: formData.includeCostEstimates
     });
   };
 
@@ -140,8 +152,8 @@ export function ProtocolExporter() {
               <Input
                 id="protocol-title"
                 placeholder="Enter protocol title..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={formData.title}
+                onChange={(e) => updateData({ title: e.target.value })}
               />
             </div>
 
@@ -157,7 +169,7 @@ export function ProtocolExporter() {
                       className="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                     >
                       <Checkbox 
-                        checked={selectedMethods.includes(method.id)}
+                        checked={formData.selectedMethods.includes(method.id)}
                         onCheckedChange={(checked) => handleMethodSelection(method.id, checked as boolean)}
                       />
                       <div className="flex-1 min-w-0">
@@ -188,7 +200,7 @@ export function ProtocolExporter() {
                     key={format}
                     onClick={() => handleFormatSelection(format)}
                     className={`flex items-center justify-center space-x-2 p-3 rounded-lg transition-colors ${
-                      selectedFormat === format
+                      formData.selectedFormat === format
                         ? 'border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300'
                         : 'border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
@@ -207,22 +219,22 @@ export function ProtocolExporter() {
               <div className="space-y-2">
                 <label className="flex items-center space-x-2">
                   <Checkbox 
-                    checked={includeCitations}
-                    onCheckedChange={(checked) => setIncludeCitations(checked === true)}
+                    checked={formData.includeCitations}
+                    onCheckedChange={(checked) => updateData({ includeCitations: checked === true })}
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">Include citations and references</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <Checkbox 
-                    checked={includeEquipment}
-                    onCheckedChange={(checked) => setIncludeEquipment(checked === true)}
+                    checked={formData.includeEquipment}
+                    onCheckedChange={(checked) => updateData({ includeEquipment: checked === true })}
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">Add equipment and materials list</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <Checkbox 
-                    checked={includeCostEstimates}
-                    onCheckedChange={(checked) => setIncludeCostEstimates(checked === true)}
+                    checked={formData.includeCostEstimates}
+                    onCheckedChange={(checked) => updateData({ includeCostEstimates: checked === true })}
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">Include cost estimates</span>
                 </label>
@@ -257,12 +269,12 @@ export function ProtocolExporter() {
             
             <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-600 p-4 text-sm">
               <div className="font-mono text-xs text-slate-500 dark:text-slate-400 mb-3">
-                {title || 'protocol_export'}.{selectedFormat}
+                {formData.title || 'protocol_export'}.{formData.selectedFormat}
               </div>
               
               <div className="space-y-3 text-slate-700 dark:text-slate-300">
                 <div className="border-b border-slate-200 dark:border-slate-600 pb-2">
-                  <h5 className="font-semibold">{title || 'Research Protocol'}</h5>
+                  <h5 className="font-semibold">{formData.title || 'Research Protocol'}</h5>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     Generated by RESAI • {new Date().toLocaleDateString()}
                   </p>
@@ -270,20 +282,20 @@ export function ProtocolExporter() {
                 
                 <div>
                   <h6 className="font-medium text-xs uppercase tracking-wide">Selected Methods</h6>
-                  <p className="text-xs">{selectedMethods.length} method(s) selected</p>
+                  <p className="text-xs">{formData.selectedMethods.length} method(s) selected</p>
                 </div>
                 
                 <div>
                   <h6 className="font-medium text-xs uppercase tracking-wide">Format</h6>
-                  <p className="text-xs">{selectedFormat.toUpperCase()} format</p>
+                  <p className="text-xs">{formData.selectedFormat.toUpperCase()} format</p>
                 </div>
                 
                 <div>
                   <h6 className="font-medium text-xs uppercase tracking-wide">Options</h6>
                   <div className="text-xs space-y-1">
-                    {includeCitations && <p>✓ Citations included</p>}
-                    {includeEquipment && <p>✓ Equipment list included</p>}
-                    {includeCostEstimates && <p>✓ Cost estimates included</p>}
+                    {formData.includeCitations && <p>✓ Citations included</p>}
+                    {formData.includeEquipment && <p>✓ Equipment list included</p>}
+                    {formData.includeCostEstimates && <p>✓ Cost estimates included</p>}
                   </div>
                 </div>
                 
