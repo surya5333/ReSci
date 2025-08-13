@@ -1,0 +1,76 @@
+ RESAI - Research Planning Assistant
+
+## Overview
+
+RESAI is a full-stack web application that serves as an AI-powered research planning assistant for scientists. The application helps researchers generate evidence-linked hypotheses, recommend research methods, summarize literature, and verify citations using Google's Gemini AI model integrated with PubMed literature search capabilities.
+
+The system follows a modern full-stack architecture with a React frontend, Express.js backend, PostgreSQL database with Drizzle ORM, and integrates with external AI and research APIs to provide comprehensive research assistance.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript and Vite for fast development and building
+- **UI Library**: Radix UI components with shadcn/ui design system for consistent, accessible interfaces
+- **Styling**: Tailwind CSS with custom CSS variables for theming and responsive design
+- **State Management**: TanStack Query (React Query) for server state management and caching
+- **Routing**: Wouter for lightweight client-side routing
+- **Form Handling**: React Hook Form with Zod validation for type-safe form management
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js framework
+- **Language**: TypeScript with ES modules for modern JavaScript features
+- **API Design**: RESTful endpoints with structured error handling and logging middleware
+- **Validation**: Zod schemas for request/response validation shared between client and server
+- **Development**: Hot reloading with Vite integration for seamless development experience
+
+### Database & ORM
+- **Database**: PostgreSQL for reliable relational data storage
+- **ORM**: Drizzle ORM with TypeScript-first approach for type-safe database operations
+- **Connection**: Neon serverless PostgreSQL for scalable cloud database hosting
+- **Migrations**: Drizzle Kit for database schema management and migrations
+- **Storage Strategy**: Hybrid approach with in-memory storage for development and PostgreSQL for production
+
+### Data Models
+- **Users**: Basic authentication with username/password
+- **Hypotheses**: Research hypotheses with domain, questions, variables, constraints, and generated content
+- **Recent Searches**: User search history for quick access to previous research queries
+- **Literature**: JSON storage of research papers from PubMed with metadata
+
+### Authentication & Security
+- **Session Management**: Express sessions with PostgreSQL session store using connect-pg-simple
+- **Password Security**: Planned implementation for password hashing and secure authentication
+- **API Security**: CORS configuration and request validation middleware
+
+## External Dependencies
+
+### AI & Machine Learning
+- **Google Gemini AI**: Primary AI service using @google/genai SDK for hypothesis generation and research analysis
+- **Model**: Gemini 1.5 Flash for fast, efficient text generation and reasoning
+
+### Research APIs
+- **PubMed E-utilities**: RESTful API integration for scientific literature search and retrieval
+- **NCBI Services**: 
+  - ESearch API for literature discovery
+  - ESummary API for paper metadata retrieval
+- **Literature Processing**: Custom service layer for parsing and structuring research paper data
+
+### Development & Build Tools
+- **Replit Integration**: Custom plugins for development environment optimization
+- **Build System**: ESBuild for fast server-side bundling and Vite for client-side building
+- **Development Tools**: Runtime error overlay and cartographer for enhanced debugging
+
+### UI & Design System
+- **Component Library**: Comprehensive Radix UI primitive components
+- **Icons**: Lucide React for consistent iconography
+- **Fonts**: Google Fonts integration (DM Sans, Geist Mono, Fira Code, Architects Daughter)
+- **Animations**: CSS-based transitions and animations for smooth user interactions
+
+### Utility Libraries
+- **Date Handling**: date-fns for date manipulation and formatting
+- **Styling Utilities**: clsx and tailwind-merge for conditional CSS classes
+- **Validation**: Zod for runtime type checking and schema validation
+- **Development**: tsx for TypeScript execution and hot reloading
