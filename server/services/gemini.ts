@@ -1,6 +1,23 @@
 import { GoogleGenAI } from "@google/genai";
+import { searchPubMed } from "./pubmed.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+
+const SYSTEM_PROMPT = `
+You are RESAI — an AI research planning assistant.
+Your role is to help scientists by:
+- Generating evidence-linked hypotheses
+- Recommending research methods
+- Summarizing literature
+- Verifying citations
+- Explaining statistical methods
+
+Rules:
+1. Use retrieved literature when possible
+2. Separate facts from reasoning
+3. Provide inline citations [Author, Year]
+4. State assumptions explicitly
+`;
 
 export interface ResearchMethod {
   title: string;
@@ -196,5 +213,50 @@ Return as structured JSON for document generation.`;
     };
   } catch (error) {
     throw new Error(`Failed to generate protocol content: ${error}`);
+  }
+}
+
+export async function generateHypothesis(
+  domain: string,
+  question: string, 
+  variables: string,
+  constraints?: string,
+  searchQuery?: string
+): Promise<string> {
+  try {
+    // Create search query for literature
+    const query = searchQuery || `${domain} ${question}`;
+    const retrievedDocs = await searchPubMed(query, 5);
+
+    // Format literature context
+    const literatureContext = retrievedDocs.map(doc => 
+      `- ${doc.title} (${doc.year}): ${doc.snippet || doc.abstract || "No abstract available"} [Source: PubMed]`
+    ).join('\n');
+
+    const prompt = `${SYSTEM_PROMPT}
+
+Research Context:
+Domain: ${domain}
+Research Question: ${question}
+Variables: ${variables}
+Constraints: ${constraints || 'None'}
+
+Retrieved Literature:
+${literatureContext}
+
+Task:
+Formulate 1–3 testable, evidence-based hypotheses addressing the research question.
+Include citations for supporting literature where possible.
+Structure your response with clear hypotheses and explanations.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    return response.text || "Unable to generate hypothesis";
+  } catch (error) {
+    console.error("Error generating hypothesis:", error);
+    throw new Error(`Failed to generate hypothesis: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }

@@ -1,5 +1,6 @@
 import { useLocation } from "wouter";
 import { Sidebar } from "@/components/sidebar";
+import { HypothesisGenerator } from "./hypothesis-generator";
 import { MethodsRecommender } from "@/components/methods-recommender";
 import { SampleSizeCalculator } from "@/components/sample-size-calculator";
 import { CitationVerifier } from "@/components/citation-verifier";
@@ -10,6 +11,10 @@ export default function Dashboard() {
 
   const getPageTitle = () => {
     switch (location) {
+      case "/hypothesis":
+        return "Hypothesis Generator";
+      case "/methods":
+        return "Research Methods Recommender";
       case "/sample-size":
         return "Sample Size Calculator";
       case "/citations":
@@ -23,6 +28,10 @@ export default function Dashboard() {
 
   const getPageDescription = () => {
     switch (location) {
+      case "/hypothesis":
+        return "Generate evidence-linked research hypotheses using AI and scientific literature";
+      case "/methods":
+        return "Generate evidence-based research methods for your study";
       case "/sample-size":
         return "Calculate required sample sizes for statistical power analysis";
       case "/citations":
@@ -36,6 +45,10 @@ export default function Dashboard() {
 
   const renderContent = () => {
     switch (location) {
+      case "/hypothesis":
+        return <HypothesisGenerator />;
+      case "/methods":
+        return <MethodsRecommender />;
       case "/sample-size":
         return <SampleSizeCalculator />;
       case "/citations":

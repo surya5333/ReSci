@@ -9,10 +9,12 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/hypothesis" component={Dashboard} />
+      <Route path="/methods" component={Dashboard} />
       <Route path="/sample-size" component={Dashboard} />
       <Route path="/citations" component={Dashboard} />
       <Route path="/protocols" component={Dashboard} />
+      <Route path="/" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );

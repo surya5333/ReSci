@@ -1,0 +1,113 @@
+import os
+import google.generativeai as genai
+import requests
+from typing import List, Dict, Any, Optional
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+class RESAIGeminiHandler:
+    def __init__(self):
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY environment variable not set")
+        
+        # Configure Gemini API
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
+
+        # System prompt for RESAI
+        self.system_prompt = """
+        You are RESAI — an AI research planning assistant.
+        Your role is to help scientists by:
+        - Generating evidence-linked hypotheses
+        - Recommending research methods
+        - Summarizing literature
+        - Verifying citations
+        - Explaining statistical methods
+        
+        Rules:
+        1. Use retrieved literature when possible
+        2. Separate facts from reasoning
+        3. Provide inline citations [Author, Year]
+        4. State assumptions explicitly
+        """
+
+    def search_pubmed(self, query: str, max_results: int = 5) -> List[Dict[str, Any]]:
+        """
+        Basic PubMed search without FAISS — returns a list of article summaries.
+        """
+        url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+        params = {
+            "db": "pubmed",
+            "term": query,
+            "retmode": "json",
+            "retmax": max_results
+        }
+        try:
+            ids = requests.get(url, params=params).json()["esearchresult"]["idlist"]
+            summaries = []
+            for pmid in ids:
+                summary_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
+                sum_params = {"db": "pubmed", "id": pmid, "retmode": "json"}
+                sum_data = requests.get(summary_url, params=sum_params).json()
+                doc = sum_data["result"][pmid]
+                summaries.append({
+                    "title": doc.get("title", ""),
+                    "source": "PubMed",
+                    "year": doc.get("pubdate", "").split(" ")[0],
+                    "snippet": doc.get("title", "")  # placeholder until abstract retrieval is added
+                })
+            return summaries
+        except Exception as e:
+            print(f"Error in PubMed search: {str(e)}")
+            return []
+
+    async def generate_hypothesis(
+        self, 
+        domain: str, 
+        question: str, 
+        variables: str,
+        constraints: Optional[str] = None,
+        search_query: Optional[str] = None
+    ) -> str:
+        """
+        Generate research hypotheses without FAISS, using live PubMed search.
+        """
+        try:
+            # Create search query
+            query = search_query or f"{domain} {question}"
+            retrieved_docs = self.search_pubmed(query)
+
+            # Format literature context
+            literature_context = "\n".join([
+                f"- {doc['title']} ({doc['year']}): {doc['snippet']} [Source: {doc['source']}]"
+                for doc in retrieved_docs
+            ])
+
+            # Build the prompt for Gemini
+            prompt = f"""
+            {self.system_prompt}
+
+            Research Context:
+            Domain: {domain}
+            Research Question: {question}
+            Variables: {variables}
+            Constraints: {constraints or 'None'}
+            
+            Retrieved Literature:
+            {literature_context}
+
+            Task:
+            Formulate 1–3 testable, evidence-based hypotheses addressing the research question.
+            Include citations for supporting literature.
+            """
+
+            # Generate response from Gemini
+            response = self.model.generate_content(prompt)
+            return response.text
+
+        except Exception as e:
+            print(f"Error generating hypothesis: {str(e)}")
+            return f"Error: {str(e)}"

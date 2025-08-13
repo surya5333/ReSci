@@ -12,12 +12,11 @@ export function Sidebar({ className }: SidebarProps) {
     { 
       name: "Hypothesis Generator", 
       href: "/hypothesis", 
-      icon: "fas fa-lightbulb",
-      disabled: true
+      icon: "fas fa-lightbulb"
     },
     { 
       name: "Methods Recommender", 
-      href: "/", 
+      href: "/methods", 
       icon: "fas fa-flask"
     },
     { 

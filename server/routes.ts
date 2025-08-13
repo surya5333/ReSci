@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMethodSchema, insertSampleSizeCalculationSchema, insertCitationVerificationSchema, insertProtocolSchema } from "@shared/schema";
-import { generateMethodsRecommendation, verifyCitation, generateProtocolContent } from "./services/gemini";
+import { insertMethodSchema, insertSampleSizeCalculationSchema, insertCitationVerificationSchema, insertProtocolSchema, insertHypothesisSchema } from "@shared/schema";
+import { generateMethodsRecommendation, verifyCitation, generateProtocolContent, generateHypothesis } from "./services/gemini";
 import { searchPubMed } from "./services/pubmed";
 import { calculateSampleSize } from "./services/statistics";
 import { exportProtocol, getExportMimeType, getExportFilename } from "./services/export";
@@ -11,6 +11,57 @@ import { z } from "zod";
 const DEFAULT_USER_ID = "default-user";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Hypothesis Generator endpoints
+  app.post("/api/hypotheses", async (req, res) => {
+    try {
+      const { domain, question, variables, constraints, searchQuery } = req.body;
+      
+      if (!domain || !question || !variables) {
+        return res.status(400).json({ message: "Domain, question, and variables are required" });
+      }
+
+      // Generate hypothesis using Gemini AI
+      const generatedContent = await generateHypothesis(domain, question, variables, constraints, searchQuery);
+      
+      // Store the hypothesis
+      const hypothesisData = {
+        userId: DEFAULT_USER_ID,
+        domain,
+        question,
+        variables,
+        constraints,
+        generatedContent
+      };
+
+      const hypothesis = await storage.createHypothesis(hypothesisData);
+      
+      res.json({
+        id: hypothesis.id,
+        hypothesis: generatedContent, // For compatibility
+        domain: hypothesis.domain,
+        question: hypothesis.question,
+        variables: hypothesis.variables,
+        constraints: hypothesis.constraints,
+        generatedContent: hypothesis.generatedContent,
+        createdAt: hypothesis.createdAt
+      });
+    } catch (error) {
+      console.error("Hypothesis generation error:", error);
+      res.status(500).json({ message: "Failed to generate hypothesis" });
+    }
+  });
+
+  // Get user's hypotheses
+  app.get("/api/hypotheses", async (req, res) => {
+    try {
+      const hypotheses = await storage.getHypothesesByUser(DEFAULT_USER_ID);
+      res.json(hypotheses);
+    } catch (error) {
+      console.error("Get hypotheses error:", error);
+      res.status(500).json({ message: "Failed to get hypotheses" });
+    }
+  });
+
   // Methods Recommender endpoint
   app.post("/api/methods/recommend", async (req, res) => {
     try {
