@@ -173,7 +173,7 @@ export function CitationVerifier() {
               </div>
 
               {/* Supporting Evidence */}
-              {results.supportingEvidence.length > 0 && (
+                {results.supportingEvidence.length > 0 && (
                 <div className="space-y-4">
                   <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
                     <div className="flex items-start space-x-3">

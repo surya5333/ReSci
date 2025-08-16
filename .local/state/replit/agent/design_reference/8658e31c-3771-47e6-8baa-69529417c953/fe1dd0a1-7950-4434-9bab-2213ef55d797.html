@@ -1,0 +1,741 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESAI - Research Planning Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['DM Sans', 'system-ui', 'sans-serif'],
+                        'mono': ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        'resai-blue': '#2563eb',
+                        'resai-emerald': '#059669',
+                        'resai-amber': '#d97706',
+                    }
+                }
+            },
+            darkMode: 'class'
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 font-sans">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="min-h-screen flex">
+        <!-- Sidebar Navigation -->
+        <!-- @COMPONENT: Sidebar -->
+        <div class="w-64 bg-white dark:bg-slate-800 shadow-lg border-r border-slate-200 dark:border-slate-700 flex flex-col">
+            <!-- Logo & Brand -->
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-resai-blue rounded-lg flex items-center justify-center">
+                        <i class="fas fa-microscope text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-slate-900 dark:text-white">RESAI</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Research Assistant</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-lightbulb w-5"></i>
+                    <span>Hypothesis Generator</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-resai-blue text-white transition-colors">
+                    <i class="fas fa-flask w-5"></i>
+                    <span>Methods Recommender</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-calculator w-5"></i>
+                    <span>Sample Size Calculator</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-check-circle w-5"></i>
+                    <span>Citation Verifier</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-file-export w-5"></i>
+                    <span>Protocol Exporter</span>
+                </a>
+            </nav>
+
+            <!-- User Section -->
+            <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-slate-300 dark:bg-slate-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-slate-600 dark:text-slate-300 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate" data-bind="user.name">Dr. Sarah Chen</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Researcher</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <!-- @COMPONENT: Header -->
+            <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Research Methods Recommender</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Generate evidence-based research methods for your study</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <button class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6 overflow-auto">
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <!-- Methods Recommender Tool -->
+                    <!-- @COMPONENT: MethodsRecommender -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-flask text-resai-blue"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Methods Recommender</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Get evidence-based research method recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <!-- Input Form -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Research Hypothesis</label>
+                                        <textarea 
+                                            class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-resai-blue focus:border-transparent resize-none" 
+                                            rows="4" 
+                                            placeholder="Enter your research hypothesis..."
+                                            data-mock="true">Increased exposure to blue light from digital devices significantly reduces melatonin production in adults aged 18-65, leading to delayed sleep onset and decreased sleep quality compared to minimal blue light exposure.</textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Research Variables</label>
+                                        <input 
+                                            type="text" 
+                                            class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-resai-blue focus:border-transparent"
+                                            placeholder="Independent and dependent variables..."
+                                            data-mock="true"
+                                            value="IV: Blue light exposure duration; DV: Melatonin levels, sleep onset time">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Constraints & Limitations</label>
+                                        <input 
+                                            type="text" 
+                                            class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-resai-blue focus:border-transparent"
+                                            placeholder="Budget, time, ethical considerations..."
+                                            data-mock="true"
+                                            value="Budget: $50,000; Timeline: 6 months; Ethics approval required">
+                                    </div>
+
+                                    <button 
+                                        class="w-full bg-resai-blue hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                                        data-event="click:generateMethods">
+                                        <i class="fas fa-magic"></i>
+                                        <span>Generate Methods</span>
+                                    </button>
+                                </div>
+
+                                <!-- Real-time Preview -->
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Search Preview</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <p class="text-slate-600 dark:text-slate-400"><strong>Query:</strong> <span class="font-mono bg-white dark:bg-slate-800 px-2 py-1 rounded">blue light melatonin sleep study methods</span></p>
+                                        <p class="text-slate-600 dark:text-slate-400"><strong>Target:</strong> Experimental methods, measurement techniques</p>
+                                        <p class="text-slate-600 dark:text-slate-400"><strong>Sources:</strong> PubMed, Research databases</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Generated Methods Results -->
+                            <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                                    <i class="fas fa-check-circle text-resai-emerald mr-2"></i>
+                                    Recommended Methods
+                                </h4>
+
+                                <!-- Primary Methods -->
+                                <div class="space-y-4 mb-6">
+                                    <!-- Method 1 -->
+                                    <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="bg-emerald-100 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 text-xs font-medium px-2.5 py-0.5 rounded-full">Primary Method</span>
+                                                <span class="text-emerald-600 dark:text-emerald-400 text-xs">Confidence: 92%</span>
+                                            </div>
+                                            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                                <i class="fas fa-bookmark"></i>
+                                            </button>
+                                        </div>
+                                        <h5 class="font-semibold text-slate-900 dark:text-white mb-2">Randomized Controlled Trial with Polysomnography</h5>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Parallel-group RCT comparing blue light exposure vs. control group using PSG for objective sleep measurement and saliva samples for melatonin analysis.</p>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                            <div>
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Pros</p>
+                                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                                    <li>• Gold standard for sleep research</li>
+                                                    <li>• Objective, quantifiable data</li>
+                                                    <li>• High internal validity</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Cons</p>
+                                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                                    <li>• High cost ($30,000-$40,000)</li>
+                                                    <li>• Requires specialized equipment</li>
+                                                    <li>• Laboratory setting may affect results</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                            <span>Citations: Chang et al. (2015), Zeitzer et al. (2000)</span>
+                                            <span>Feasibility: Moderate</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Method 2 -->
+                                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 text-xs font-medium px-2.5 py-0.5 rounded-full">Primary Method</span>
+                                                <span class="text-blue-600 dark:text-blue-400 text-xs">Confidence: 87%</span>
+                                            </div>
+                                            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                                <i class="fas fa-bookmark"></i>
+                                            </button>
+                                        </div>
+                                        <h5 class="font-semibold text-slate-900 dark:text-white mb-2">Crossover Design with Actigraphy & Ecological Assessment</h5>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Within-subject crossover study using actigraphy watches and mobile apps for ecological validity with salivary melatonin sampling.</p>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                            <div>
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Pros</p>
+                                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                                    <li>• Higher ecological validity</li>
+                                                    <li>• Cost-effective approach</li>
+                                                    <li>• Participants as own controls</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Cons</p>
+                                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                                    <li>• Potential carryover effects</li>
+                                                    <li>• Less precise than PSG</li>
+                                                    <li>• Compliance challenges</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                            <span>Citations: Reid et al. (2014), Gooley et al. (2011)</span>
+                                            <span>Feasibility: High</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Alternative Method -->
+                                <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                    <h5 class="text-md font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
+                                        <i class="fas fa-lightbulb text-resai-amber mr-2"></i>
+                                        Alternative Method
+                                    </h5>
+                                    
+                                    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <span class="bg-amber-100 dark:bg-amber-800 text-amber-800 dark:text-amber-100 text-xs font-medium px-2.5 py-0.5 rounded-full">Backup Option</span>
+                                            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                                <i class="fas fa-bookmark"></i>
+                                            </button>
+                                        </div>
+                                        <h6 class="font-semibold text-slate-900 dark:text-white mb-2">Survey-Based Observational Study with Sleep Diaries</h6>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-3">Large-scale questionnaire study with validated sleep scales and digital device usage tracking, suitable for limited budget scenarios.</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400"><strong>Use when:</strong> Primary methods are not feasible due to budget constraints or equipment availability</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MethodsRecommender -->
+
+                    <!-- Sample Size Calculator Tool -->
+                    <!-- @COMPONENT: SampleSizeCalculator -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calculator text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Sample Size Calculator</h3>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">Calculate required sample sizes for statistical power</p>
+                                    </div>
+                                </div>
+                                <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <!-- Input Parameters -->
+                                <div class="lg:col-span-2 space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Test Type</label>
+                                            <select class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                                <option>Two-sample t-test</option>
+                                                <option>One-way ANOVA</option>
+                                                <option>Proportion test</option>
+                                                <option>Correlation test</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Effect Size</label>
+                                            <input 
+                                                type="number" 
+                                                step="0.1" 
+                                                class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                placeholder="0.5"
+                                                value="0.5">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Power (1-β)</label>
+                                            <input 
+                                                type="number" 
+                                                step="0.01" 
+                                                min="0" 
+                                                max="1" 
+                                                class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                placeholder="0.80"
+                                                value="0.80">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Alpha (α)</label>
+                                            <input 
+                                                type="number" 
+                                                step="0.001" 
+                                                min="0" 
+                                                max="1" 
+                                                class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                placeholder="0.05"
+                                                value="0.05">
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                                        data-event="click:calculateSampleSize">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>Calculate Sample Size</span>
+                                    </button>
+                                </div>
+
+                                <!-- Results Display -->
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Calculation Results</h4>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="bg-white dark:bg-slate-800 rounded-lg p-3">
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Required Sample Size</p>
+                                            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400" data-bind="calculatedSampleSize">64</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">per group</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-white dark:bg-slate-800 rounded p-2">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">Total N</p>
+                                                <p class="font-semibold text-slate-900 dark:text-white" data-bind="totalSampleSize">128</p>
+                                            </div>
+                                            <div class="bg-white dark:bg-slate-800 rounded p-2">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">+20% Dropout</p>
+                                                <p class="font-semibold text-slate-900 dark:text-white" data-bind="adjustedSampleSize">154</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                                            <p><strong>Formula:</strong> Cohen's d power analysis</p>
+                                            <p><strong>Assumptions:</strong> Normal distribution, equal variances</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Formula Explanation -->
+                            <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                <h5 class="font-medium text-slate-900 dark:text-white mb-2 flex items-center">
+                                    <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
+                                    Statistical Formula & Explanation
+                                </h5>
+                                <div class="font-mono text-sm bg-white dark:bg-slate-800 rounded p-3 mb-2">
+                                    n = 2 × (z<sub>α/2</sub> + z<sub>β</sub>)² × σ² / δ²
+                                </div>
+                                <p class="text-sm text-slate-600 dark:text-slate-300">
+                                    Where n = sample size per group, z<sub>α/2</sub> = critical value for alpha, z<sub>β</sub> = critical value for beta, σ = pooled standard deviation, δ = effect size
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: SampleSizeCalculator -->
+
+                    <!-- Citation Verifier Tool -->
+                    <!-- @COMPONENT: CitationVerifier -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Citation Verifier</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Verify research claims against published literature</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <!-- Claim Input -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Research Claim to Verify</label>
+                                <textarea 
+                                    class="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none" 
+                                    rows="3" 
+                                    placeholder="Enter the research claim you want to verify..."
+                                    data-mock="true">Blue light exposure from screens significantly suppresses melatonin production by up to 50% within 2 hours of exposure.</textarea>
+                                
+                                <div class="mt-3 flex items-center justify-between">
+                                    <button 
+                                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
+                                        data-event="click:verifyClaim">
+                                        <i class="fas fa-search"></i>
+                                        <span>Verify Claim</span>
+                                    </button>
+                                    
+                                    <div class="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
+                                        <span>Sources: PubMed, arXiv</span>
+                                        <span>•</span>
+                                        <span>Analysis: AI-powered</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Verification Results -->
+                            <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Verification Results</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 text-sm font-medium px-3 py-1 rounded-full">Supported</span>
+                                        <span class="text-sm text-slate-500 dark:text-slate-400">Confidence: 85%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Supporting Evidence -->
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                        <div class="flex items-start space-x-3">
+                                            <i class="fas fa-check-circle text-green-600 mt-1"></i>
+                                            <div class="flex-1">
+                                                <h5 class="font-medium text-slate-900 dark:text-white mb-2">Strong Supporting Evidence</h5>
+                                                
+                                                <!-- @MAP: supportingCitations.map(citation => ( -->
+                                                <div class="space-y-3">
+                                                    <div class="bg-white dark:bg-slate-800 rounded border border-green-200 dark:border-green-700 p-3">
+                                                        <div class="flex items-start justify-between mb-2">
+                                                            <h6 class="font-medium text-slate-900 dark:text-white text-sm">Chang, A. M., et al. (2015)</h6>
+                                                            <span class="bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 text-xs px-2 py-1 rounded">95% match</span>
+                                                        </div>
+                                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">"Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness"</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">"Found 55% reduction in melatonin levels after 2 hours of eReader use compared to printed books."</p>
+                                                        <div class="flex items-center justify-between mt-2">
+                                                            <span class="text-xs text-slate-500 dark:text-slate-400">PNAS • Impact Factor: 11.1</span>
+                                                            <button class="text-blue-600 hover:text-blue-700 text-xs">
+                                                                <i class="fas fa-external-link-alt mr-1"></i>View Paper
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="bg-white dark:bg-slate-800 rounded border border-green-200 dark:border-green-700 p-3">
+                                                        <div class="flex items-start justify-between mb-2">
+                                                            <h6 class="font-medium text-slate-900 dark:text-white text-sm">Zeitzer, J. M., et al. (2000)</h6>
+                                                            <span class="bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 text-xs px-2 py-1 rounded">87% match</span>
+                                                        </div>
+                                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">"Sensitivity of the human circadian pacemaker to nocturnal light"</p>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">"Demonstrated 39% suppression of melatonin with 90 minutes of bright light exposure."</p>
+                                                        <div class="flex items-center justify-between mt-2">
+                                                            <span class="text-xs text-slate-500 dark:text-slate-400">J Physiology • Impact Factor: 4.8</span>
+                                                            <button class="text-blue-600 hover:text-blue-700 text-xs">
+                                                                <i class="fas fa-external-link-alt mr-1"></i>View Paper
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- @END_MAP )) -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Partial Evidence -->
+                                    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                                        <div class="flex items-start space-x-3">
+                                            <i class="fas fa-exclamation-triangle text-amber-600 mt-1"></i>
+                                            <div>
+                                                <h5 class="font-medium text-slate-900 dark:text-white mb-2">Additional Considerations</h5>
+                                                <p class="text-sm text-slate-600 dark:text-slate-300">Some studies show variability in melatonin suppression rates (30-70%) depending on light intensity, wavelength, and individual differences. Consider mentioning this range in your work.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI Analysis Summary -->
+                                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                        <div class="flex items-start space-x-3">
+                                            <i class="fas fa-robot text-blue-600 mt-1"></i>
+                                            <div>
+                                                <h5 class="font-medium text-slate-900 dark:text-white mb-2">AI Analysis Summary</h5>
+                                                <p class="text-sm text-slate-600 dark:text-slate-300">Your claim is well-supported by peer-reviewed literature. The 50% suppression figure aligns with multiple studies, though you may want to specify "up to 55%" based on the strongest evidence. Consider adding that effects vary by individual and light characteristics.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center space-x-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                    <button class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
+                                        <i class="fas fa-download"></i>
+                                        <span>Export Report</span>
+                                    </button>
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
+                                        <i class="fas fa-share"></i>
+                                        <span>Share Results</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: CitationVerifier -->
+
+                    <!-- Protocol Exporter Tool -->
+                    <!-- @COMPONENT: ProtocolExporter -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-export text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Protocol Exporter</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Export research methods to lab-friendly formats</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Export Options -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Select Methods to Export</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+                                                <input type="checkbox" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-900 dark:text-white">Randomized Controlled Trial with Polysomnography</span>
+                                            </label>
+                                            <label class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+                                                <input type="checkbox" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-900 dark:text-white">Crossover Design with Actigraphy</span>
+                                            </label>
+                                            <label class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+                                                <input type="checkbox" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-900 dark:text-white">Sample size calculations</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Export Format</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button class="flex items-center justify-center space-x-2 p-3 border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-lg transition-colors">
+                                                <i class="fas fa-file-pdf"></i>
+                                                <span class="text-sm font-medium">PDF</span>
+                                            </button>
+                                            <button class="flex items-center justify-center space-x-2 p-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                                <i class="fas fa-file-word"></i>
+                                                <span class="text-sm font-medium">DOCX</span>
+                                            </button>
+                                            <button class="flex items-center justify-center space-x-2 p-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                                <i class="fas fa-file-code"></i>
+                                                <span class="text-sm font-medium">JSON</span>
+                                            </button>
+                                            <button class="flex items-center justify-center space-x-2 p-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                                <i class="fas fa-file-alt"></i>
+                                                <span class="text-sm font-medium">TXT</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Additional Options</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center space-x-2">
+                                                <input type="checkbox" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-700 dark:text-slate-300">Include citations and references</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="checkbox" checked class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-700 dark:text-slate-300">Add equipment and materials list</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="checkbox" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+                                                <span class="text-sm text-slate-700 dark:text-slate-300">Include cost estimates</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                                        data-event="click:exportProtocol">
+                                        <i class="fas fa-download"></i>
+                                        <span>Export Protocol</span>
+                                    </button>
+                                </div>
+
+                                <!-- Preview -->
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center">
+                                        <i class="fas fa-eye mr-2"></i>
+                                        Export Preview
+                                    </h4>
+                                    
+                                    <div class="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-600 p-4 text-sm">
+                                        <div class="font-mono text-xs text-slate-500 dark:text-slate-400 mb-3">research_protocol_blue_light_study.pdf</div>
+                                        
+                                        <div class="space-y-3 text-slate-700 dark:text-slate-300">
+                                            <div class="border-b border-slate-200 dark:border-slate-600 pb-2">
+                                                <h5 class="font-semibold">Blue Light and Sleep Study Protocol</h5>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">Generated by RESAI • {new Date().toLocaleDateString()}</p>
+                                            </div>
+                                            
+                                            <div>
+                                                <h6 class="font-medium text-xs uppercase tracking-wide">Primary Method</h6>
+                                                <p class="text-xs">Randomized Controlled Trial with Polysomnography</p>
+                                            </div>
+                                            
+                                            <div>
+                                                <h6 class="font-medium text-xs uppercase tracking-wide">Sample Size</h6>
+                                                <p class="text-xs">N = 128 (64 per group, +20% for dropout = 154)</p>
+                                            </div>
+                                            
+                                            <div>
+                                                <h6 class="font-medium text-xs uppercase tracking-wide">Key Citations</h6>
+                                                <p class="text-xs">Chang et al. (2015), Zeitzer et al. (2000)</p>
+                                            </div>
+                                            
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                                [Preview truncated - full protocol will include detailed procedures, equipment lists, and analysis plans]
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recent Exports -->
+                                    <div class="mt-4">
+                                        <h5 class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Recent Exports</h5>
+                                        <div class="space-y-1">
+                                            <div class="flex items-center justify-between text-xs">
+                                                <span class="text-slate-600 dark:text-slate-300">sleep_study_protocol.pdf</span>
+                                                <span class="text-slate-400">2 min ago</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-xs">
+                                                <span class="text-slate-600 dark:text-slate-300">methods_comparison.docx</span>
+                                                <span class="text-slate-400">1 hour ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: ProtocolExporter -->
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <script>
+        // TODO: Implement React components and state management
+        // TODO: Add API integration for methods recommendation
+        // TODO: Implement statistical calculations for sample size
+        // TODO: Add citation verification backend
+        // TODO: Implement protocol export functionality
+        
+        (function() {
+            // Mock interactions for demonstration
+            const buttons = document.querySelectorAll('[data-event]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const event = this.getAttribute('data-event');
+                    console.log(`Event triggered: ${event}`);
+                    
+                    // Add loading state
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                    this.disabled = true;
+                    
+                    // Simulate API call
+                    setTimeout(() => {
+                        this.innerHTML = originalContent;
+                        this.disabled = false;
+                    }, 2000);
+                });
+            });
+
+            // Mock form validation
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    if (this.value.length > 10) {
+                        this.classList.remove('border-red-300');
+                        this.classList.add('border-green-300');
+                    } else {
+                        this.classList.remove('border-green-300');
+                        this.classList.add('border-red-300');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
